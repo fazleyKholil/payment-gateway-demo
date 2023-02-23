@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentApi", "src\PaymentApi\PaymentApi.csproj", "{884190A8-4635-451E-91E5-BA302EA1FC24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{A2FA9FC7-5332-4C1A-8825-1D291A4B7E51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Processor", "src\Bank.Processor\Bank.Processor.csproj", "{86F94DF3-386A-42EF-B3DA-FE2DFDE322E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Common", "src\Payment.Common\Payment.Common.csproj", "{3CB6F958-753C-449F-BDD5-B0987E970CA9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{884190A8-4635-451E-91E5-BA302EA1FC24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884190A8-4635-451E-91E5-BA302EA1FC24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884190A8-4635-451E-91E5-BA302EA1FC24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884190A8-4635-451E-91E5-BA302EA1FC24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2FA9FC7-5332-4C1A-8825-1D291A4B7E51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2FA9FC7-5332-4C1A-8825-1D291A4B7E51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2FA9FC7-5332-4C1A-8825-1D291A4B7E51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2FA9FC7-5332-4C1A-8825-1D291A4B7E51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86F94DF3-386A-42EF-B3DA-FE2DFDE322E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86F94DF3-386A-42EF-B3DA-FE2DFDE322E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86F94DF3-386A-42EF-B3DA-FE2DFDE322E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86F94DF3-386A-42EF-B3DA-FE2DFDE322E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CB6F958-753C-449F-BDD5-B0987E970CA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CB6F958-753C-449F-BDD5-B0987E970CA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CB6F958-753C-449F-BDD5-B0987E970CA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CB6F958-753C-449F-BDD5-B0987E970CA9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
