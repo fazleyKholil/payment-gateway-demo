@@ -14,7 +14,7 @@ var defaultTags = {
 
 // Creating resource group
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
-  name: 'fazley-payment-gateway-rg-8'
+  name: 'fazley-payment-gateway-rg-4'
   location: location
 }
 
@@ -44,6 +44,46 @@ module database 'modules/sql-server/sql-azure.bicep' = {
   }
 }
 
+// Creating storage queue
+module stg './Modules/storage/storage.bicep' = {
+  name: 'pgstorageaccountfaz'
+  scope: rg  
+  params: {
+    storageAccountName: 'pgstorageaccountfaz'
+    queueName: 'payment-test-queue'
+     location: location
+  }
+}
+
+
+var PaymentApiEnvironmentVariables = [
+  {
+    name: 'Queueing__QueueConnection'
+    value: 'DefaultEndpointsProtocol=https;AccountName=${stg.outputs.storageAccountName};AccountKey=${stg.outputs.storageAccountKey};EndpointSuffix=core.windows.net'
+  }
+  {
+    name: 'Queueing__QueueName'
+    value: stg.outputs.queueName
+  }
+  {
+    name: 'Queueing__BatchCount'
+    value: 5
+  }
+  {
+    name: 'KeyVault__VaultUri'
+    value: 'https://fazley-test-vault.vault.azure.net'
+  }
+  {
+    name: 'DbConnection__ConnectionString'
+    value: database.outputs.db_url
+  }
+  {
+    name: 'ApplicationInsights__InstrumentationKey'
+    value: instrumentation.outputs.appInsightsInstrumentationKey
+  }
+]
+
+
 var applicationEnvironmentVariables = [
         {
           name: 'ApplicationInsights_InstrumentationKey'
@@ -54,25 +94,15 @@ var applicationEnvironmentVariables = [
           value: database.outputs.db_url
         }
   ]
-  
-// Creating ACR for Payment Api
-module paymentApiAcr './Modules/container-registry/acr.bicep' = {
-  name: 'PaymentApi'
-  scope: rg
-  params: {
-    location: location
-    acrName: 'PaymentApi'
-    acrSku: 'Basic'
-  }
-}
 
-// Creating ACR for Bank Processor
+
+// Creating ACR for the project
 module bankProcessorAcr './Modules/container-registry/acr.bicep' = {
-  name: 'BankProcessor'
+  name: 'PaymentGatewayAcr'
   scope: rg
   params: {
     location: location
-    acrName: 'BankProcessor'
+    acrName: 'PaymentGatewayAcr'
     acrSku: 'Basic'
   }
 }
@@ -86,7 +116,7 @@ module webApp 'modules/app-service/app-service.bicep' = {
     environment: environment
     resourceTags: defaultTags
     instanceNumber: '001'
-    environmentVariables: applicationEnvironmentVariables
+    environmentVariables: PaymentApiEnvironmentVariables
     
   }
 }
@@ -111,16 +141,4 @@ module bankProcessorAci './Modules/container-instance/aci.bicep' = {
     ]
   }
 }
-
-
-
-
-// // Deploying storage account using module
-// module stg './Modules/storage.bicep' = {
-//   name: 'storageDeployment'
-//   scope: rg  
-//   params: {
-//     storageAccountName: 'fazbicepstorageacc'
-//   }
-// }
 
