@@ -84,7 +84,7 @@ resource appServiceApp 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'WEBSITES_PORT'
-          value: '8080'
+          value: '80'
         }
         ])
       }

@@ -30,7 +30,7 @@ builder.Services.Configure<DbConnectionOptions>(
 builder.Services.AddAzureStorageQueue(builder.Configuration);
 builder.Services.AddAzureSecrets(builder.Configuration);
 builder.Services.AddRepositories();
-
+builder.Services.AddHealthChecks();
 builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); });
 
 
@@ -48,5 +48,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseHealthChecks("/health");
 
 app.Run();
