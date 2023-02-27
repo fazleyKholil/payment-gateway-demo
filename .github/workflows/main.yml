@@ -21,7 +21,7 @@ jobs:
             username: ${{ secrets.REGISTRY_USERNAME }}
             password: ${{ secrets.REGISTRY_PASSWORD }}
         - run: |
-            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/bank-processor:${{ github.sha }} -f payment-gateway-demo/src/Bank.Processor/Dockerfile .
+            docker build -t bank-processor -f payment-gateway/src/Bank.Processor/Dockerfile .
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}//bank-processor:${{ github.sha }}
 
         - name: 'Deploy to Azure Container Instances'
