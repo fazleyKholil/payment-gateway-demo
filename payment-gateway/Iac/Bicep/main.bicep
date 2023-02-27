@@ -96,16 +96,16 @@ var applicationEnvironmentVariables = [
   ]
 
 
-// Creating ACR for the project
-module bankProcessorAcr './Modules/container-registry/acr.bicep' = {
-  name: 'PaymentGatewayAcr'
-  scope: rg
-  params: {
-    location: location
-    acrName: 'PaymentGatewayAcr'
-    acrSku: 'Basic'
-  }
-}
+// // Creating ACR for the project
+// module bankProcessorAcr './Modules/container-registry/acr.bicep' = {
+//   name: 'PaymentGatewayAcr'
+//   scope: rg
+//   params: {
+//     location: location
+//     acrName: 'PaymentGatewayAcr'
+//     acrSku: 'Basic'
+//   }
+// }
 
 module webApp 'modules/app-service/app-service.bicep' = {
   name: 'webApp'
