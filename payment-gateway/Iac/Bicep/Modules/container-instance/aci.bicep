@@ -45,6 +45,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2022-09-01'
     restartPolicy: restartPolicy
     ipAddress: {
       type: 'Public'
+       dnsNameLabel: 'pg-${name}'
       ports: [
         {
           port: port
