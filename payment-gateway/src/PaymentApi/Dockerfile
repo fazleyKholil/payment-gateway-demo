@@ -13,5 +13,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build PaymentApi/out .
 
-EXPOSE 8081
+EXPOSE 80
 ENTRYPOINT ["dotnet", "PaymentApi.dll"]
