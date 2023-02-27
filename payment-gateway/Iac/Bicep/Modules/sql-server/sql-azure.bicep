@@ -7,7 +7,8 @@ param tags object
 param serverName string = 'sql-${applicationName}-${environment}-${instanceNumber}'
 param sqlDBName string = applicationName
 param administratorLogin string = 'sql${replace(applicationName, '-', '')}root'
-param administratorPassword string = newGuid()
+@secure()
+param administratorPassword string 
 
 resource sqlServer 'Microsoft.Sql/servers@2020-02-02-preview' = {
   name: serverName
@@ -34,6 +35,6 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-05-01-preview' = {
   }
 }
 
+output db_connection_string string = 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDBName};Persist Security Info=False;User ID=${administratorLogin};Password=${administratorPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
 output db_url string = sqlServer.properties.fullyQualifiedDomainName
 output db_username string = administratorLogin
-output db_password string = administratorPassword

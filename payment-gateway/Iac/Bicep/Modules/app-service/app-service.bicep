@@ -21,20 +21,12 @@ param environmentVariables array
 param resourceTags object
 
 var appServicePlanName = 'plan-${applicationName}-${instanceNumber}'
-var acrName = 'acr${take(replace(applicationName, '-', ''),40)}${instanceNumber}'
+param imageName string
+param containerRegistryName string
+param containerRegistryId string
+param containerRegistryApiVersion string
 
-// Azure Container Registry - https://docs.microsoft.com/en-us/azure/templates/microsoft.containerregistry/registries?tabs=bicep
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2020-11-01-preview' = {
-  name: acrName
-  location: location
-  tags: resourceTags
-  sku: {
-    name: 'Basic'
-  }
-  properties: {
-    adminUserEnabled: true
-  }
-}
+
 
 resource appServicePlan 'Microsoft.Web/serverFarms@2020-12-01' = {
   name: appServicePlanName
@@ -60,7 +52,7 @@ resource appServiceApp 'Microsoft.Web/sites@2020-12-01' = {
     httpsOnly: true
     clientAffinityEnabled: false
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistry.name}.azurecr.io/${applicationName}/${applicationName}:latest'
+      linuxFxVersion: 'DOCKER|${imageName}'
 
       ftpsState: 'FtpsOnly'
       http20Enabled: true
@@ -72,15 +64,15 @@ resource appServiceApp 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
-          value: 'https://${containerRegistry.name}.azurecr.io'
+          value: 'https://${containerRegistryName}.azurecr.io'
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-          value: '${containerRegistry.name}'
+          value: containerRegistryName
         }
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-          value: listCredentials(containerRegistry.id, containerRegistry.apiVersion).passwords[0].value
+          value: listCredentials(containerRegistryId, containerRegistryApiVersion).passwords[0].value
         }
         {
           name: 'WEBSITES_PORT'
@@ -93,4 +85,4 @@ resource appServiceApp 'Microsoft.Web/sites@2020-12-01' = {
 
 output application_name string = appServiceApp.name
 output application_url string = appServiceApp.properties.hostNames[0]
-output container_registry_name string = containerRegistry.name
+output container_registry_name string = containerRegistryName
