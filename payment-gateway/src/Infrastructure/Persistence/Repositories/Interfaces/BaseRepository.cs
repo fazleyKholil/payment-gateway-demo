@@ -7,8 +7,8 @@ namespace Infrastructure.Persistence.Repositories.Interfaces;
 
 public abstract class BaseRepository<T> : IBaseRepository<T>
 {
-    private readonly DbConnectionOptions _connectionOptions;
-    private readonly ILogger<BaseRepository<T>> _logger;
+    protected readonly DbConnectionOptions _connectionOptions;
+    protected readonly ILogger<BaseRepository<T>> _logger;
 
     protected BaseRepository(ILogger<BaseRepository<T>> logger,
         IOptions<DbConnectionOptions> connectionOptions)

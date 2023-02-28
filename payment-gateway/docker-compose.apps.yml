@@ -1,0 +1,46 @@
+version: '3.5'
+
+services:
+
+  payment-api:
+    build:
+      context: .
+      dockerfile: src/PaymentApi/Dockerfile
+    container_name: payment-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:5000
+      - ApplicationInsights:InstrumentationKey=8d7037c7-d3ac-4846-8dda-343bfd741909
+      - Queueing:QueueConnection=DefaultEndpointsProtocol=https;AccountName=pgstorageaccountfaz1;AccountKey=13MaTPjcWNNVnsOrvJroNb6EWfbK12o04brIrZ+Us8fiN/iQiG2W00mSblZ/AMQAdBpbfDbkepmd+AStKbz0Gg==;EndpointSuffix=core.windows.net
+      - Queueing:QueueName=payment-test-queue
+      - Queueing:BatchCount=5
+      - KeyVault:VaultUri=https://vault-test-payment-2.vault.azure.net
+      - DbConnection:ConnectionString=Server=tcp:sql-payment-gateway-demo-db1-dev-001.database.windows.net,1433;Initial Catalog=payment-gateway-demo-db1;Persist Security Info=False;User ID=sqlpaymentgatewaydemodb1root;Password=Objectivity@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+    ports:
+      - "5001:5000"
+    networks:
+      - payment-gateway-demo-network
+
+  bank-processor:
+    build:
+      context: .
+      dockerfile: src/Bank.Processor/Dockerfile
+    container_name: bank-processor
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:5000
+      - ApplicationInsights:InstrumentationKey=8d7037c7-d3ac-4846-8dda-343bfd741909
+      - Queueing:QueueConnection=DefaultEndpointsProtocol=https;AccountName=pgstorageaccountfaz1;AccountKey=13MaTPjcWNNVnsOrvJroNb6EWfbK12o04brIrZ+Us8fiN/iQiG2W00mSblZ/AMQAdBpbfDbkepmd+AStKbz0Gg==;EndpointSuffix=core.windows.net
+      - Queueing:QueueName=payment-test-queue
+      - Queueing:BatchCount=5
+      - KeyVault:VaultUri=https://vault-test-payment-2.vault.azure.net
+      - DbConnection:ConnectionString=Server=tcp:sql-payment-gateway-demo-db1-dev-001.database.windows.net,1433;Initial Catalog=payment-gateway-demo-db1;Persist Security Info=False;User ID=sqlpaymentgatewaydemodb1root;Password=Objectivity@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+    ports:
+      - "5002:5000"
+    networks:
+      - payment-gateway-demo-network
+
+  
+networks:
+  payment-gateway-demo-network:
+    name: payment-gateway-demo-network

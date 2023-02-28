@@ -2,6 +2,7 @@ using Infrastructure.BankConnection;
 using Infrastructure.Instrumentation.MicrosoftApplicationInsights;
 using Infrastructure.Messaging;
 using Infrastructure.Messaging.AzureStorageQueue;
+using Infrastructure.Persistence;
 using Infrastructure.Vault;
 using Payment.Common.Dto;
 
@@ -21,11 +22,18 @@ builder.Services.AddOptions();
 builder.Services.Configure<QueueingOptions>(
     builder.Configuration.GetSection("Queueing"));
 
+builder.Services.AddOptions();
+builder.Services.Configure<DbConnectionOptions>(
+    builder.Configuration.GetSection("DbConnection"));
+
+
 builder.Services.AddBankSimulator();
 builder.Services.AddAzureStorageQueue(builder.Configuration);
 builder.Services.AddAzureSecrets(builder.Configuration);
+builder.Services.AddRepositories();
 builder.Services.AddAzureStorageQueueConsumer<PaymentRequestDto>(builder.Configuration);
 builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssembly(typeof(Program).Assembly); });
+
 
 var app = builder.Build();
 

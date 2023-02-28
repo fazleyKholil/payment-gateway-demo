@@ -33,6 +33,7 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-05-01-preview' = {
     autoPauseDelay: 60
     minCapacity: '0.5'
   }
+  
 }
 
 output db_connection_string string = 'Server=tcp:${sqlServer.properties.fullyQualifiedDomainName},1433;Initial Catalog=${sqlDBName};Persist Security Info=False;User ID=${administratorLogin};Password=${administratorPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'

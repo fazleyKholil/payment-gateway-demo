@@ -22,6 +22,6 @@ resource external_queue 'Microsoft.Storage/storageAccounts/queueServices/queues@
 }
 
 var storageAccountKeyValue = storageAccount.listKeys().keys[0].value
-output storageAccountName string = storageAccountKeyValue
-output storageAccountKey string = storageAccountName
+output storageAccountName string =  storageAccountName
+output storageAccountKey string = storageAccountKeyValue
 output queueName string = queueName

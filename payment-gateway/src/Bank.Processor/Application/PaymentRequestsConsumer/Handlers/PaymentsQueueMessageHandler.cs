@@ -2,7 +2,9 @@
 using Infrastructure.BankConnection;
 using Infrastructure.Messaging;
 using Infrastructure.Messaging.AzureStorageQueue;
+using Infrastructure.Persistence.Repositories.Interfaces;
 using MediatR;
+using Payment.Common;
 using Payment.Common.Dto;
 
 namespace Bank.Processor.Application.PaymentRequestsConsumer.Handlers;
@@ -11,17 +13,20 @@ public class PaymentsQueueMessageHandler : IRequestHandler<MessageDequeued<Payme
 {
     private readonly IMediator _mediator;
     private readonly ILogger<PaymentsQueueMessageHandler> _logger;
+    private readonly IPaymentResponseRepository _paymentResponseRepository;
     private readonly IBankConnection _bankConnection;
     private IQeueingService _qeueingService;
 
     public PaymentsQueueMessageHandler(IMediator mediator,
         IBankConnection bankConnection,
         IQeueingService qeueingService,
+        IPaymentResponseRepository paymentResponseRepository,
         ILogger<PaymentsQueueMessageHandler> logger)
     {
         _mediator = mediator;
         _logger = logger;
         _qeueingService = qeueingService;
+        _paymentResponseRepository = paymentResponseRepository;
         _bankConnection = bankConnection;
     }
 
@@ -59,6 +64,10 @@ public class PaymentsQueueMessageHandler : IRequestHandler<MessageDequeued<Payme
                 _logger.LogInformation(
                     $"Bank returned {bankResponse.ResponseCode} for TransactionId {paymentReq.TransactionId} ");
 
+                //update Payment status
+                await _paymentResponseRepository.UpdatePaymentResponse(paymentReq.TransactionId,
+                    ResponseCodes.BankProcessingApproved.ToString());
+
                 //emit events to notify merchant back event grid / sns --> webhooks
 
                 //delete message from queue
@@ -66,7 +75,7 @@ public class PaymentsQueueMessageHandler : IRequestHandler<MessageDequeued<Payme
             }
             catch (Exception e)
             {
-                _logger.LogError($"An error occured while processing transaction with ID : {paymentReq?.TransactionId}",
+                _logger.LogError($"An error occured while processing transaction with ID : {paymentReq?.TransactionId} {e.Message}",
                     e);
             }
         }

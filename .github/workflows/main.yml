@@ -24,15 +24,15 @@ jobs:
             docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/paymentapi:${{ github.sha }} -f payment-gateway/src/PaymentApi/Dockerfile .
             docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/paymentapi:${{ github.sha }}
 
-        # - name: 'Build and push image Bank Processor'
-        #   uses: azure/docker-login@v1
-        #   with:
-        #     login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
-        #     username: ${{ secrets.REGISTRY_USERNAME }}
-        #     password: ${{ secrets.REGISTRY_PASSWORD }}
-        # - run: |
-        #     docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/bank-processor:${{ github.sha }} -f payment-gateway/src/Bank.Processor/Dockerfile .
-        #     docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/bank-processor:${{ github.sha }}
+        - name: 'Build and push image Bank Processor'
+          uses: azure/docker-login@v1
+          with:
+            login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
+        - run: |
+            docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/bank-processor:${{ github.sha }} -f payment-gateway/src/Bank.Processor/Dockerfile .
+            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/bank-processor:${{ github.sha }}
 
         # - name: 'Deploy to Azure Container Instances'
         #   uses: 'azure/aci-deploy@v1'

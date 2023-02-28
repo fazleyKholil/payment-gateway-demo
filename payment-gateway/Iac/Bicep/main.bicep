@@ -1,7 +1,7 @@
 @description('Specifies the location for resources.')
 param location string = 'CentralUS'
 param environment string = 'dev'
-param vaultName string = 'vault-test-payment-gw'
+param vaultName string = 'vault-test-payment-2'
 
 // =========== main.bicep ===========
 
@@ -15,7 +15,7 @@ var defaultTags = {
 
 // Creating resource group
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
-  name: 'fazley-payment-gateway-rg-6'
+  name: 'fazley-payment-gateway-rg-1'
   location: location
 }
 
@@ -86,17 +86,6 @@ var PaymentApiEnvironmentVariables = [
 ]
 
 
-var applicationEnvironmentVariables = [
-        {
-          name: 'ApplicationInsights_InstrumentationKey'
-          value: instrumentation.outputs.appInsightsInstrumentationKey
-        }
-        {
-          name: 'DbConnection__ConnectionString'
-          value: database.outputs.db_url
-        }
-  ]
-
 module webApp 'modules/app-service/app-service.bicep' = {
   name: 'webApp'
   scope: rg
@@ -107,8 +96,8 @@ module webApp 'modules/app-service/app-service.bicep' = {
     resourceTags: defaultTags
     instanceNumber: '001'
     environmentVariables: PaymentApiEnvironmentVariables
-    imageName: 'sss'
-    containerRegistryName: 'fazleysharedcr.azurecr.io/paymentapi'
+    imageName: 'fazleysharedcr.azurecr.io/paymentapi'
+    containerRegistryName: 'fazleysharedcr'
     containerRegistryId: '/subscriptions/875307ef-d9a6-4807-a12c-be3587c3ea53/resourceGroups/SharedRg/providers/Microsoft.ContainerRegistry/registries/fazleySharedCr'
     containerRegistryApiVersion: '2023-01-01-preview'
   }
@@ -118,21 +107,26 @@ module webApp 'modules/app-service/app-service.bicep' = {
 module vault 'modules/vault/vault.bicep' = {
   name: vaultName
   scope: rg
-  dependsOn:[
-    webApp
-  ]
   params: {
-    keyVaultResourceName: vaultName
-    resourceGroupName: rg.name
+    keyVaultName: vaultName
+    location: location
+    enabledForDeployment: false
+    enabledForDiskEncryption: false
+    enabledForTemplateDeployment: false
+    keysPermissions: [
+      'list'
+      'get'
+      'create'
+    ]
+    secretsPermissions: [
+      'list'
+      'get'
+      'set'
+    ]
+    tenantId: subscription().tenantId
+    skuName:  'standard'
+    objectId: '557dda39-c039-4445-a970-2f4ff987f88d'
   }
-}
-
-var keyVaultPermissions = {
-  secrets: [ 
-    'get'
-    'list'
-    'set'
-  ]
 }
 
 module keyVault 'Modules/vault/keyvaultpolicy.bicep' = {
@@ -144,29 +138,22 @@ module keyVault 'Modules/vault/keyvaultpolicy.bicep' = {
   params: {
       keyVaultResourceName: vaultName
       principalId: webApp.outputs.principalId
-      keyVaultPermissions: keyVaultPermissions
-      policyAction: 'add'
   }
 }
 
-// // Creating Bank Processor instace
-// module bankProcessorAci './Modules/container-instance/aci.bicep' = {
-//   name: 'bankProcessorAci1'
-//   scope: rg
-//   params: {
-//     name: 'bankprocessorcontainer1'
-//     location: location
-//     image: 'mcr.microsoft.com/azuredocs/aci-helloworld'
-//     port: 80
-//     cpuCores: 1
-//     memoryInGb: 1
-//     restartPolicy: 'Always'
-//     environmentVariables: [
-//       {
-//         name: 'DbConnection__ConnectionString'
-//         secureValue: 'Server=tcp:fazley-sql-server.database.windows.net,1433;Initial Catalog=fazley-test-db;Persist Security Info=False;User ID=fazley;Password=Objectivity@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
-//       }
-//     ]
-//   }
-// }
+// Creating Bank Processor instace
+module bankProcessorAci './Modules/container-instance/aci.bicep' = {
+  name: 'bankProcessorAci1'
+  scope: rg
+  params: {
+    name: 'bankprocessorcontainer1'
+    location: location
+    image: 'mcr.microsoft.com/azuredocs/aci-helloworld'
+    port: 80
+    cpuCores: 1
+    memoryInGb: 1
+    restartPolicy: 'Always'
+    environmentVariables: PaymentApiEnvironmentVariables
+  }
+}
 
