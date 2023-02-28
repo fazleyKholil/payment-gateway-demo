@@ -49,7 +49,7 @@ module bankProcessorAci './Modules/container-instance/aci.bicep' = {
   params: {
     name: 'bankprocessorcontainer1'
     location: location
-    image: 'mcr.microsoft.com/azuredocs/aci-helloworld'
+    image: 'fazleysharedcr.azurecr.io/bank-processor'
     port: 80
     cpuCores: 1
     memoryInGb: 1
