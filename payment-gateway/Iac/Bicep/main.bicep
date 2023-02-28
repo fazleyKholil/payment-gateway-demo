@@ -15,7 +15,7 @@ var defaultTags = {
 
 // Creating resource group
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
-  name: 'fazley-payment-gateway-rg-5'
+  name: 'fazley-payment-gateway-rg-6'
   location: location
 }
 
@@ -38,7 +38,7 @@ module database 'modules/sql-server/sql-azure.bicep' = {
   scope: resourceGroup(rg.name)
   params: {
     location: 'eastus'
-    applicationName: 'payment-gateway-demo-db'
+    applicationName: 'payment-gateway-demo-db1'
     administratorPassword: 'Objectivity@123'
     environment: environment
     tags: defaultTags
@@ -108,7 +108,7 @@ module webApp 'modules/app-service/app-service.bicep' = {
     instanceNumber: '001'
     environmentVariables: PaymentApiEnvironmentVariables
     imageName: 'sss'
-    containerRegistryName: 'fazleySharedCr'
+    containerRegistryName: 'fazleysharedcr.azurecr.io/paymentapi'
     containerRegistryId: '/subscriptions/875307ef-d9a6-4807-a12c-be3587c3ea53/resourceGroups/SharedRg/providers/Microsoft.ContainerRegistry/registries/fazleySharedCr'
     containerRegistryApiVersion: '2023-01-01-preview'
   }
@@ -118,9 +118,11 @@ module webApp 'modules/app-service/app-service.bicep' = {
 module vault 'modules/vault/vault.bicep' = {
   name: vaultName
   scope: rg
+  dependsOn:[
+    webApp
+  ]
   params: {
-    keyVaultResourceName: rg.name
-    principalId: webApp.outputs.principalId
+    keyVaultResourceName: vaultName
     resourceGroupName: rg.name
   }
 }
@@ -140,7 +142,7 @@ module keyVault 'Modules/vault/keyvaultpolicy.bicep' = {
   scope: rg
   name: 'keyVault'
   params: {
-      keyVaultResourceName: vault.name
+      keyVaultResourceName: vaultName
       principalId: webApp.outputs.principalId
       keyVaultPermissions: keyVaultPermissions
       policyAction: 'add'

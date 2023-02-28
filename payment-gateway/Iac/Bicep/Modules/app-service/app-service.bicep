@@ -43,10 +43,13 @@ resource appServicePlan 'Microsoft.Web/serverFarms@2020-12-01' = {
 }
 
 // Reference: https://docs.microsoft.com/azure/templates/microsoft.web/sites?tabs=bicep
-resource appServiceApp 'Microsoft.Web/sites@2020-12-01' = {
+resource appServiceApp 'Microsoft.Web/sites@2021-02-01' = {
   name: 'app-${applicationName}-${environment}-${instanceNumber}'
   location: location
   tags: resourceTags
+  identity: {
+    type: 'SystemAssigned'
+ }
   properties: {
     serverFarmId: appServicePlan.id
     httpsOnly: true
@@ -83,6 +86,8 @@ resource appServiceApp 'Microsoft.Web/sites@2020-12-01' = {
     }
 }
 
+
+output principalId string = appServiceApp.identity.principalId
 output application_name string = appServiceApp.name
 output application_url string = appServiceApp.properties.hostNames[0]
 output container_registry_name string = containerRegistryName
