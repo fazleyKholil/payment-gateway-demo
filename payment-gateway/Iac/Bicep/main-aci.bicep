@@ -24,7 +24,7 @@ var PaymentApiEnvironmentVariables = [
   }
   {
     name: 'Queueing__BatchCount'
-    value: 5
+    value: '5'
   }
   {
     name: 'KeyVault__VaultUri'
@@ -41,19 +41,20 @@ var PaymentApiEnvironmentVariables = [
 ]
 
 
+
+
 // Creating Bank Processor instace
 module bankProcessorAci './Modules/container-instance/aci.bicep' = {
-  name: 'bankProcessorAci4'
+  name: 'bankProcessorContainerApp'
   scope: resourceGroup(resourceGroupName)
   params: {
-    name: 'bankprocessorcontainer3'
+    name: 'bankprocessorcontainerapp'
     location: location
-    image: 'fazleysharedcr.azurecr.io/bank-processor'
-    port: 80
-    cpuCores: 1
-    memoryInGb: 1
-    restartPolicy: 'Always'
-    environmentVariables: PaymentApiEnvironmentVariables
+    containerImage: 'bank-processor:3f22db6504f7ba66a144b1bc11d0d67d8bb0ba68'
+    containerRegistryName: 'paymentdemoregistry'
+    containerRegistryResourceGroupName:resourceGroupName
+    containerRegistrySubscriptionId: subscription().subscriptionId
+    environmentVariable: PaymentApiEnvironmentVariables
   }
 }
 

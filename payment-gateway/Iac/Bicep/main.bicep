@@ -96,7 +96,7 @@ module webApp 'modules/app-service/app-service.bicep' = {
     resourceTags: defaultTags
     instanceNumber: '001'
     environmentVariables: PaymentApiEnvironmentVariables
-    imageName: 'fazleysharedcr.azurecr.io/paymentapi'
+    imageName: 'paymentdemoregistry.azurecr.io/paymentapi'
     containerRegistryName: 'fazleysharedcr'
     containerRegistryId: '/subscriptions/875307ef-d9a6-4807-a12c-be3587c3ea53/resourceGroups/SharedRg/providers/Microsoft.ContainerRegistry/registries/fazleySharedCr'
     containerRegistryApiVersion: '2023-01-01-preview'
