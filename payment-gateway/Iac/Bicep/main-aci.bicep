@@ -41,13 +41,12 @@ var PaymentApiEnvironmentVariables = [
 ]
 
 
-
 // Creating Bank Processor instace
 module bankProcessorAci './Modules/container-instance/aci.bicep' = {
-  name: 'bankProcessorAci1'
+  name: 'bankProcessorAci4'
   scope: resourceGroup(resourceGroupName)
   params: {
-    name: 'bankprocessorcontainer1'
+    name: 'bankprocessorcontainer3'
     location: location
     image: 'fazleysharedcr.azurecr.io/bank-processor'
     port: 80

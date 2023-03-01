@@ -19,6 +19,9 @@ param environmentVariables array
 resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2022-09-01' = {
   name: name
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     containers: [
       {
@@ -58,3 +61,4 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2022-09-01'
 
 
 output containerIPv4Address string = containerGroup.properties.ipAddress.ip
+output principalId string = containerGroup.identity.principalId
